@@ -1,0 +1,27 @@
+{
+  "name": "PicLoader",
+  "main": "index.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Synclop/PicLoader",
+  "authors": [
+    "xananax@synclop.com"
+  ],
+  "description": "Simple image loading queue manager",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "dom",
+    "image",
+    "queue",
+    "loader"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}

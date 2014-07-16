@@ -1,0 +1,34 @@
+{
+  "name": "PicLoader",
+  "version": "0.0.1",
+  "description": "Simple image loading queue manager",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "chai": "^1.9.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.20.1"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Synclop/PicLoader.git"
+  },
+  "keywords": [
+    "dom",
+    "image",
+    "loader",
+    "queue"
+  ],
+  "author": "xananax@synclop.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Synclop/PicLoader/issues"
+  },
+  "homepage": "https://github.com/Synclop/PicLoader"
+}

@@ -1,0 +1,22 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Loader Tests</title>
+	<link rel="stylesheet" href="mocha.css" />
+	<style type="text/css">
+		#images{width:80%;margin:0 auto;}
+		img{height:50px;width:auto;}
+	</style>
+</head>
+<body>
+	<div id="mocha"></div>
+	<div id="images"></div>
+	<script src="images.js"></script>
+	<script src="mocha.js"></script>
+	<script src="chai.js"></script>
+	<script src="loader.js"></script>
+	<script>mocha.setup('bdd')</script>
+	<script src="test.js"></script>
+	<script>mocha.checkLeaks();mocha.run();</script>
+</body>
+</html>
