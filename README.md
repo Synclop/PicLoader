@@ -132,14 +132,18 @@ Stops listening to the event. If you do not pass the function that was used when
 
 ## EVENTS
 
- * Loader.events.LOADED = 'loaded' 
-	called after each image load. Receives the DOM img element that has loaded
- * Loader.events.LOADING = 'loading'
-	called before loading an image. Receives the source
- * Loader.events.COMPLETE = 'complete'
-	called when all images in queue have been loaded.
- * Loader.events.ERROR = 'error'
-	called when an image fails to load
+ * Loader.events.LOADED
+   `= 'loaded'`
+    called after each image load. Receives the DOM img element that has loaded
+ * Loader.events.LOADING
+    ` = 'loading'`
+    called before loading an image. Receives the source
+ * Loader.events.COMPLETE
+    `  = 'complete'`
+    called when all images in queue have been loaded.
+ * Loader.events.ERROR
+    ` = 'error'`
+    called when an image fails to load
 
 ## TESTING
 
