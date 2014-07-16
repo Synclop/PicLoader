@@ -145,8 +145,16 @@ Stops listening to the event. If you do not pass the function that was used when
 
 Run
 
+Tests run in the browser and require Chai and Mocha. Run:
+
 ```
-node test
+npm install
+```
+
+Then
+
+```
+npm test
 ```
 
 which will open a server on port 7357
