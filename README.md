@@ -30,7 +30,7 @@ Here is an example of usage (it uses jQuery for convenience):
 		.on(PicLoader.events.LOADED,function(image){
 			if(!image){return false;}
 			var src = image.src.replace('http://localhost/','')
-			$('data-src="'+src+'"').addClass('loaded').css('image-background','url('+image.src+')');
+			$('data-src="'+src+'"').addClass('loaded').css('background-image','url('+image.src+')');
 		})
 	;
 
@@ -50,10 +50,12 @@ or, if you want more callbacks:
 
 	//collecting all the images
 	var $images = $('.image').each(function(){
-		var $el = $(this);
-		loader.add($el.data('src'),function(image){
+		var $el = $(this)
+		,	src = $el.data('src')
+		;
+		loader.add(src,function(image){
 			if(image){
-				$el.addClass('loaded').css('image-background','url('+src+')')
+				$el.addClass('loaded').css('background-image','url('+src+')')
 			}else{
 				$el.addClass('error')
 			}
