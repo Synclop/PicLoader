@@ -1,7 +1,9 @@
 # picLoader
 
 ImageQueueLoader is a little module for creating a queue of images to pre-load, and be able to switch order of images fast.
-It is not dependant on any library and should work in all browsers (esoteric IE7 not tested).
+It is not dependant on any library and should work in all browsers,...in theory. Tests results welcome, if you want to help (see "testing", below).
+
+### Usage
 
 Here is an example of usage (it uses jQuery for convenience):
 

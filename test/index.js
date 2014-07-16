@@ -28,6 +28,10 @@ var http = require('http')
 		header:'application/javascript'
 	,	path:'test/images/index.js'
 	}
+,	'/favicon.ico':{
+		header:'image/ico'
+	,	path:'test/favicon.ico'
+	}
 ,	'/':{
 		header:'text/html'
 	,	path:'test/index.html'
@@ -35,12 +39,14 @@ var http = require('http')
 }
 
 for(var n in files){
-	files[n].text = fs.readFileSync(rootDir +files[n].path,{encoding:'utf8'})
+	var opts = (n=='/favicon.ico') ? {} : {encoding:'utf8'};
+	files[n].text =  fs.readFileSync(rootDir +files[n].path,opts);
 }
 
 http
 	.createServer(function (req, res) {
 		var url = req.url.replace(/\?.*$/,'')
+		console.log(url)
 		var notExists = function(err){
 			res.writeHead(404, {'Content-Type': 'text/plain'});
 			res.end(err || 'Could not find '+req.url);
@@ -57,6 +63,10 @@ http
 					res.end(data, 'binary');
 				})
 			})
+		}
+		else if(url == '/favicon.ico'){
+			res.writeHead(200, {'Content-Type' : files[url].header});
+			res.end(files[url].text,'binary');	
 		}
 		else if(files[url]){
 			res.writeHead(200, {'Content-Type' : files[url].header});
