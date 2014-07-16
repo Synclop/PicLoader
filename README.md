@@ -75,6 +75,10 @@ It exposes the global PicLoader when used as a regular javascript file.
 So use bower, use npm, use browserify, or include the js file...Feel free.
 
 
+# API
+
+You will find more info in the test suite (/test/test.js), but here below are the important points
+
 ## METHODS
 
 ### start([fn])
@@ -134,3 +138,23 @@ Stops listening to the event. If you do not pass the function that was used when
 		called when all images in queue have been loaded.
 	* Loader.events.ERROR = 'error'
 		called when an image fails to load
+
+## TESTING
+
+Run
+
+```
+node test
+```
+
+which will open a server on port 7357
+Open http://localhost:7357 in your browser to run the tests.
+
+
+## LICENSE
+
+MIT
+
+## DISCLAIMER
+
+Some random images have been included in the repo for testing. They have not been verified as royalty-free. If there is any problem on copyright, leave an issue and we'll remove the image presto.
