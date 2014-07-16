@@ -46,13 +46,12 @@ Here is an example of usage (it uses jQuery for convenience):
 or, if you want more callbacks:
 ```js
 
-	var images = [];
 	var loader = new PicLoader().limit(3);
 
 	//collecting all the images
 	var $images = $('.image').each(function(){
 		var $el = $(this);
-		images.push($el.data('src'),function(image){
+		loader.add($el.data('src'),function(image){
 			if(image){
 				$el.addClass('loaded').css('image-background','url('+src+')')
 			}else{
