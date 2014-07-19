@@ -113,6 +113,12 @@ finally, it can be used to bump an image to top
 	loader.add('c.jpg') //c will now load before everything else
 ```
 
+add() can also be fed objects, but make sure they have a "src" property
+
+```js
+	loader.add({name:'my image',src:'my_image.jpg'})
+```
+
 ### limit()
 
 Sets the maximum number of concurrent downloads. Defaults to 1.
@@ -145,6 +151,9 @@ Stops listening to the event. If you do not pass the function that was used when
  * Loader.events.ERROR
     ` = 'error'`
     called when an image fails to load
+ * Loader.events.PROMOTED
+    ` = 'promoted'`
+    called when an image is promoted to the top of the queue
 
 ## TESTING
 

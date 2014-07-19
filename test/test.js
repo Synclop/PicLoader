@@ -91,7 +91,31 @@ describe('PicLoader',function(){
 				expect(loaded).to.be.equal(4);
 				done();
 			})
-		})
+		});
+		it('should accept objects as inputs',function(done){
+			var arr = refreshImagesArray(images,4);
+			var ld = new PicLoader();
+			var i = 0;
+			var loaded = 0;
+			var length = arr.length
+			for(i=0;i<length;i++){
+				arr[i] = {src:arr[i],name:'object-'+i,number:i}
+			}
+			var incFunction = function IncFunction(image,src){
+				imagesContainer.appendChild(image);
+				expect(src).to.have.property('name');
+				expect(src).to.have.property('number');
+				expect(src.name).to.be.equal(arr[src.number].name);
+				loaded++;
+			}
+			for(i=0;i<length;i++){
+				ld.add(arr[i],incFunction)
+			}
+			ld.start(function(){
+				expect(loaded).to.be.equal(4);
+				done();
+			})
+		});
 	});
 	describe('#start()',function(){
 		it('should load images one by one',function(done){
@@ -182,17 +206,17 @@ describe('PicLoader',function(){
 				done();
 			}).start();
 		});
-		it('should launch an event when an image loads',function(done){
-			var arr = refreshImagesArray(images,1);
+		it('should launch a "promoted" event when an image is promoted',function(done){
+			var arr = refreshImagesArray(images,3);
 			var ld = new PicLoader(arr);
-			var orig_src = arr[0];
-			ld.on(PicLoader.events.LOADED,function(image,src){
-				expect(removeLocalHost(image.src)).to.be.equal(src);
+			var orig_src = arr[2];
+			ld.on(PicLoader.events.PROMOTED,function(src){
 				expect(src).to.be.equal(orig_src);
 				done();
-			}).start();
+			})
+			.add(arr[2]);
 		});
-		it('should fire a complete event when all images have loaded',function(done){
+		it('should fire a "complete" event when all images have loaded',function(done){
 			var arr = refreshImagesArray(images,3);
 			var ld = new PicLoader(arr);
 			ld.on(PicLoader.events.COMPLETE,function(){
@@ -203,7 +227,7 @@ describe('PicLoader',function(){
 			})
 			ld.start();
 		});
-		it('should fire loaded event after each image',function(done){
+		it('should fire a "loaded" event after each image',function(done){
 			var arr = refreshImagesArray(images,3);
 			var ld = new PicLoader(arr);
 			var callbacks = 0

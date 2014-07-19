@@ -9,6 +9,7 @@
 	,	LOADING:'loading'
 	,	COMPLETE:'complete'
 	,	ERROR:'error'
+	,	PROMOTED:'promoted'
 	}
 	
 	var Loader = function(images,n_parallel){
@@ -64,7 +65,7 @@
 				this._previousOneWasAFunction = false;
 				this.add.apply(this,src);
 			}
-			else if(typeof src === 'string'){
+			else if((typeof src === 'string') || src.hasOwnProperty('src')){
 				if(this.getIndex(src)<0){
 					this._queue.unshift(src);
 					if(this._previousOneWasAFunction){
@@ -84,8 +85,11 @@
 
 	p.getIndex = function(src){
 		var q = this._queue, l = q.length, i = 0;
+		if(!(typeof src === 'string')){src = src.src}
 		for(i;i<l;++i){
-			if(q[i] === src){return i;}
+			if(q[i] === src || (q[i].src && q[i].src === src)){
+				return i;
+			}
 		}
 		return -1;
 	}
@@ -144,13 +148,14 @@
 		this.dispatch(Events.LOADING,[src]);
 		image.onerror = image.onabort = function(){done(this,true);}
 		image.onload = function(){done(this);}
-		image.src = src;
+		image.src = (typeof src === 'string') ? src : src.src;
 		return this;
 	}
 
 	p.promote = function(src){
 		var index = this.getIndex(src);
 		if(index<=0){return this;}
+		this.dispatch(Events.PROMOTED,[src]);
 		return this.promoteByIndex(index);
 	}
 
@@ -202,7 +207,11 @@
 		var l = this._events[evt] && this._events[evt].length, i = 0;
 		if(l){
 			for(i;i<l;++i){
-				this._events[evt][i].apply(this,args);
+				try{
+					this._events[evt][i].apply(this,args);
+				}catch(e){
+					console.log(this._events[evt])
+				}
 			}
 		}
 		return this;
