@@ -123,13 +123,13 @@
 			}
 			if(err){
 				self._errors.push(src);
-				self.dispatch(Events.ERROR,src);
-				self.dispatch(src,null);
+				self.dispatch(Events.ERROR,[src]);
+				self.dispatch(src,[null,src]);
 			}else{
 				self._loaded.push(src);
 				self.loaded[src] = image;
-				self.dispatch(Events.LOADED,image);
-				self.dispatch(src,image);
+				self.dispatch(Events.LOADED,[image,src]);
+				self.dispatch(src,[image,src]);
 			}
 			self.next();
 		};
@@ -141,7 +141,7 @@
 		,	done = makeDone(this,src)
 		;
 		this._loading.push(src);
-		this.dispatch(Events.LOADING,src);
+		this.dispatch(Events.LOADING,[src]);
 		image.onerror = image.onabort = function(){done(this,true);}
 		image.onload = function(){done(this);}
 		image.src = src;
@@ -202,7 +202,7 @@
 		var l = this._events[evt] && this._events[evt].length, i = 0;
 		if(l){
 			for(i;i<l;++i){
-				this._events[evt][i].call(this,args);
+				this._events[evt][i].apply(this,args);
 			}
 		}
 		return this;

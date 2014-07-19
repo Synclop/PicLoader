@@ -3,6 +3,8 @@ var imagesContainer = document.getElementById('images');
 
 var refreshImage = function(src){return (src + '?=' + Math.random());}
 
+var removeLocalHost = function(src){return src.replace('http://localhost:7357','').replace('http://127.0.0.1:7357','');}
+
 function getRandomSubarray(arr, size) {
 	var shuffled = arr.slice(0), i = arr.length, temp, index;
 	while (i--) {
@@ -36,7 +38,7 @@ describe('PicLoader',function(){
 			var ld = PicLoader();
 			expect(ld).to.be.instanceOf(PicLoader);
 		})
-	})
+	});
 	describe('#add()',function(){
 		it('should add as many items as passed in arguments',function(){
 			var ld = PicLoader();
@@ -90,7 +92,7 @@ describe('PicLoader',function(){
 				done();
 			})
 		})
-	})
+	});
 	describe('#start()',function(){
 		it('should load images one by one',function(done){
 			var arr = refreshImagesArray(images,3);
@@ -101,7 +103,7 @@ describe('PicLoader',function(){
 				expect(ld.loaded[arr[2]].width).to.be.above(0)
 				done();
 			},500)
-		})
+		});
 		it('should fire a callback when all images have loaded',function(done){
 			var arr = refreshImagesArray(images,3);
 			var ld = new PicLoader(arr);
@@ -111,51 +113,7 @@ describe('PicLoader',function(){
 				expect(n).to.be.equal(3)
 				done();
 			});
-		})
-		it('should fire a complete event when all images have loaded',function(done){
-			var arr = refreshImagesArray(images,3);
-			var ld = new PicLoader(arr);
-			ld.on(PicLoader.events.COMPLETE,function(){
-				var n = 0;
-				for(var i in ld.loaded){n++;}
-				expect(n).to.be.equal(3)
-				done();
-			})
-			ld.start();
-		})
-		it('should fire loaded event after each image',function(done){
-			var arr = refreshImagesArray(images,3);
-			var ld = new PicLoader(arr);
-			var callbacks = 0
-			ld.on(PicLoader.events.LOADED,function(image){
-				imagesContainer.appendChild(image);
-				callbacks++;
-			}).start(function(){
-				expect(callbacks).to.be.equal(arr.length);
-				done();
-			});
-		})
-		it('should fire an event named like the image',function(done){
-			var arr = refreshImagesArray(images,3);
-			var ld = new PicLoader(arr);
-			ld.on(arr[1],function(image){
-				imagesContainer.appendChild(image);
-				expect(image.src.replace('http://localhost:7357','').replace('http://127.0.0.1:7357','')).to.be.equal(arr[1])
-			}).start(function(){
-				done();
-			});
-		})
-		it('should still fire the event in case of error, but image should be null',function(done){
-			var ld = new PicLoader(['a']);
-			ld
-				.on('a',function(image){
-					expect(image).to.be.equal(null);
-				})
-				.on(PicLoader.events.ERROR,function(src){
-					expect(src).to.be.equal('a');
-				})
-				.start(done);
-		})
+		});
 	});
 	describe('#promote()',function(){
 		this.timeout(15000);
@@ -164,13 +122,13 @@ describe('PicLoader',function(){
 			ld.add('a','b','c','d');
 			ld.promote('c');
 			expect(ld._queue).to.eql(['c','a','b','d']);
-		})
+		});
 		it('should do nothing if the promoted object does not exist',function(){
 			var ld = PicLoader();
 			ld.add('a','b','c','d');
 			ld.promote('e');
 			expect(ld._queue).to.eql(['a','b','c','d']);
-		})
+		});
 		it('should load in the promoted order',function(done){
 			var length = 15;
 			var last = length -1;
@@ -192,8 +150,9 @@ describe('PicLoader',function(){
 					imagesContainer.appendChild(image);
 					expect(lastImageIsLoaded).to.be.equal(true);
 				})
-				.start(done);
-		})
+				.start(done)
+			;
+		});
 	});
 	describe('#limit()',function(){
 		it('should set the maximum number of concurrent downloads',function(done){
@@ -209,6 +168,76 @@ describe('PicLoader',function(){
 					expect(max).to.be.equal(5);
 					done();
 				})
+			;
 		})
-	})
+	});
+	describe('Events',function(){
+		it('should launch a "loaded" event when an image loads',function(done){
+			var arr = refreshImagesArray(images,1);
+			var ld = new PicLoader(arr);
+			var orig_src = arr[0];
+			ld.on(PicLoader.events.LOADED,function(image,src){
+				expect(removeLocalHost(image.src)).to.be.equal(src)
+				expect(src).to.be.equal(orig_src);
+				done();
+			}).start();
+		});
+		it('should launch an event when an image loads',function(done){
+			var arr = refreshImagesArray(images,1);
+			var ld = new PicLoader(arr);
+			var orig_src = arr[0];
+			ld.on(PicLoader.events.LOADED,function(image,src){
+				expect(removeLocalHost(image.src)).to.be.equal(src);
+				expect(src).to.be.equal(orig_src);
+				done();
+			}).start();
+		});
+		it('should fire a complete event when all images have loaded',function(done){
+			var arr = refreshImagesArray(images,3);
+			var ld = new PicLoader(arr);
+			ld.on(PicLoader.events.COMPLETE,function(){
+				var n = 0;
+				for(var i in ld.loaded){n++;}
+				expect(n).to.be.equal(3)
+				done();
+			})
+			ld.start();
+		});
+		it('should fire loaded event after each image',function(done){
+			var arr = refreshImagesArray(images,3);
+			var ld = new PicLoader(arr);
+			var callbacks = 0
+			ld.on(PicLoader.events.LOADED,function(image){
+				imagesContainer.appendChild(image);
+				callbacks++;
+			}).start(function(){
+				expect(callbacks).to.be.equal(arr.length);
+				done();
+			});
+		});
+		it('should fire an event named like the image',function(done){
+			var arr = refreshImagesArray(images,3);
+			var ld = new PicLoader(arr);
+			ld.on(arr[1],function(image,src){
+				imagesContainer.appendChild(image);
+				expect(removeLocalHost(image.src)).to.be.equal(arr[1]);
+				expect(src).to.be.equal(arr[1]);
+			}).start(function(){
+				done();
+			});
+		});
+		it('should still fire the event in case of error, but image should be null',function(done){
+			var ld = new PicLoader(['a']);
+			ld
+				.on('a',function(image,src){
+					expect(image).to.be.equal(null);
+					expect(src).to.be.equal('a')
+				})
+				.on(PicLoader.events.ERROR,function(src){
+					expect(src).to.be.equal('a');
+				})
+				.start(done);
+			;
+		});
+	});
 })
