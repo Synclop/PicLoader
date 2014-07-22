@@ -1,7 +1,7 @@
 {
   "name": "PicLoader",
   "main": "index.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/Synclop/PicLoader",
   "authors": [
     "xananax@synclop.com"

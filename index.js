@@ -10,6 +10,7 @@
 	,	COMPLETE:'complete'
 	,	ERROR:'error'
 	,	PROMOTED:'promoted'
+	,	DEMOTED:'demoted'
 	}
 	
 	var Loader = function(images,n_parallel){
@@ -32,6 +33,7 @@
 		this._complete = false;
 		this._paused = true;
 		this._previousOneWasAFunction = false;
+		this._insertionPoint = 0;
 	}
 
 	p.parallel = p.limit = function(n){
@@ -58,7 +60,7 @@
 	}
 
 	p.add = function(){
-		var l = arguments.length - 1,i = -1, src;
+		var l = arguments.length - 1,i = -1, src,insertAt,index;
 		for(l;l>i;--l){
 			src = arguments[l];
 			if(Object.prototype.toString.call(src) === '[object Array]'){
@@ -66,26 +68,37 @@
 				this.add.apply(this,src);
 			}
 			else if((typeof src === 'string') || src.hasOwnProperty('src')){
-				if(this.getIndex(src)<0){
-					this._queue.unshift(src);
-					if(this._previousOneWasAFunction){
-						this.once(src,this._previousOneWasAFunction);
-					}
+				insertAt = (this._insertionPoint == 'last') ? this._queue.length : this._insertionPoint;
+				index = this.getIndex(src);
+				if(index >= 0){
+					this.changePosition(index,insertAt);
 				}else{
-					this.promote(src);
+					this._queue.splice(insertAt,0,src);
 				}
+				if(this._previousOneWasAFunction){this.once(src,this._previousOneWasAFunction);}
 				this._previousOneWasAFunction = false;
 			}
 			else if(src.constructor && src.call && src.apply){
 				this._previousOneWasAFunction = src;
 			}
 		}
-    	return this;
+		return this;
+	}
+
+	p.queue = function(){
+		var args = new Array(arguments.length), l = args.length, i = 0;
+		if(!l){return this;}
+		for(i;i<l;i++){args[i] = arguments[i];}
+		var insertAt = this._insertionPoint;
+		this._insertionPoint = 'last';
+		this.add.apply(this,args);
+		this._insertionPoint = insertAt;
+		return this;
 	}
 
 	p.getIndex = function(src){
 		var q = this._queue, l = q.length, i = 0;
-		if(!(typeof src === 'string')){src = src.src}
+		if(typeof src !== 'string'){src = src.src}
 		for(i;i<l;++i){
 			if(q[i] === src || (q[i].src && q[i].src === src)){
 				return i;
@@ -96,7 +109,7 @@
 
 	p.next = function(){
 
-		if(this._paused == true){return this;}
+		if(this._paused === true){return this;}
 
 		if(!this._queue.length){
 			if(!this._complete){
@@ -155,17 +168,17 @@
 	p.promote = function(src){
 		var index = this.getIndex(src);
 		if(index<=0){return this;}
-		this.dispatch(Events.PROMOTED,[src]);
-		return this.promoteByIndex(index);
+		return this.changePosition(index,0);
 	}
 
-	p.promoteByIndex = function(index){
-		if(this._queue.length>index){
-			if(index>0){
-				this._queue.unshift(this._queue.splice(index,1)[0]);
-			}else{
-				//force download here
-			}
+	p.changePosition = function(index,insertAt){
+		if(index == insertAt){return this;}
+		var item = this._queue.splice(index,1)[0];
+		this._queue.splice(insertAt,0,item);
+		if(index > insertAt){
+			this.dispatch(Events.PROMOTED,[item,index,insertAt]);
+		}else{
+			this.dispatch(Events.DEMOTED,[item,index,insertAt]);
 		}
 		return this;
 	}

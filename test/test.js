@@ -117,6 +117,25 @@ describe('PicLoader',function(){
 			})
 		});
 	});
+	describe('#queue()',function(){
+		it('should accomplish the same things that add() does, but add items at the end of the queue instead of at start',function(){
+			var ld = PicLoader();
+			ld.queue('a','b','c','d');
+			ld.queue('e')
+			expect(ld._queue).to.eql(['d','c','b','a','e']);
+		})
+		it('should flatten passed arrays',function(){
+			var ld = PicLoader();
+			ld.queue(['a','b','c','d'],'e',['f','g']);
+			expect(ld._queue).to.eql(['g','f','e','d','c','b','a']);
+		})
+		it('should move an item added twice to the bottom of the queue',function(){
+			var ld = PicLoader();
+			ld.add(['a','b','c','d','e','f']);
+			ld.queue('a');
+			expect(ld._queue).to.eql(['b','c','d','e','f','a']);
+		})
+	})
 	describe('#start()',function(){
 		it('should load images one by one',function(done){
 			var arr = refreshImagesArray(images,3);
