@@ -157,6 +157,24 @@ describe('PicLoader',function(){
 				done();
 			});
 		});
+		/*** FAILS !!!
+		it('Can be called more than once, but will call complete several times',function(done){
+			var arr1 = refreshImagesArray(images,3);
+			var arr2 = refreshImagesArray(images,3);
+			var ld = new PicLoader(arr1);
+			var completes = 0;
+			ld.start(function(){
+				completes++;
+				if(completes==2){
+					var n = 0;
+					for(var i in ld.loaded){n++;}
+					expect(n).to.be.equal(6)
+					done();
+				}
+				ld.add(arr2).start();
+			});
+		});
+		***/
 	});
 	describe('#promote()',function(){
 		this.timeout(15000);
@@ -235,6 +253,16 @@ describe('PicLoader',function(){
 			})
 			.add(arr[2]);
 		});
+		it('should launch a "demoted" event when an image is promoted',function(done){
+			var arr = refreshImagesArray(images,3);
+			var ld = new PicLoader(arr);
+			var orig_src = arr[2];
+			ld.on(PicLoader.events.DEMOTED,function(src){
+				expect(src).to.be.equal(orig_src);
+				done();
+			})
+			.queue(arr[2]);
+		});
 		it('should fire a "complete" event when all images have loaded',function(done){
 			var arr = refreshImagesArray(images,3);
 			var ld = new PicLoader(arr);
@@ -280,7 +308,6 @@ describe('PicLoader',function(){
 					expect(src).to.be.equal('a');
 				})
 				.start(done);
-			;
 		});
 	});
 })

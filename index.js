@@ -49,6 +49,7 @@
 
 	p.start = function(fn){
 		this._paused = false;
+		this._complete = false;
 		if(fn){this.on(Events.COMPLETE,fn);}
 		this.next();
 		return this;
@@ -77,6 +78,9 @@
 				}
 				if(this._previousOneWasAFunction){this.once(src,this._previousOneWasAFunction);}
 				this._previousOneWasAFunction = false;
+				//if(this._complete === true && this._paused === true){
+					//this.start();
+				//}
 			}
 			else if(src.constructor && src.call && src.apply){
 				this._previousOneWasAFunction = src;
@@ -84,6 +88,7 @@
 		}
 		return this;
 	}
+
 
 	p.queue = function(){
 		var args = new Array(arguments.length), l = args.length, i = 0;
