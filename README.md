@@ -90,7 +90,7 @@ starts the queue. Optionally calls the passed callback.
 
 ### add(source,[source,...])
 
-adds one or more items to the queue. "source" can be an array or a string.
+prepends one or more items to the queue. "source" can be an array or a string.
 
 ```js
 	loader.add('source','source',['source','source'])
@@ -118,6 +118,10 @@ add() can also be fed objects, but make sure they have a "src" property
 ```js
 	loader.add({name:'my image',src:'my_image.jpg'})
 ```
+
+### queue()
+
+does the same as add(), but added items are queued instead of pre-pended
 
 ### limit()
 
